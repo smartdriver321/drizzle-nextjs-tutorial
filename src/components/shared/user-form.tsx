@@ -1,7 +1,9 @@
 'use client'
 
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
+import { userSchema, UserSchema } from '@/db/schema/user'
 import { updateUser } from '@/app/(admin)/admin/actions'
 import { signIn } from '@/app/(auth)/sign-in/actions'
 import { signUp } from '@/app/(auth)/sign-up/actions'
@@ -11,21 +13,22 @@ import { Form } from '@/components/ui/form'
 import { toast } from '@/lib/utils'
 
 type Props = {
-	defaultValues: any
+	defaultValues: UserSchema
 }
 
 export function UserForm({ defaultValues }: Props) {
-	const form = useForm<any>({
+	const form = useForm<UserSchema>({
 		defaultValues,
+		resolver: zodResolver(userSchema),
 	})
 
 	const mode = useWatch({ control: form.control, name: 'mode' })
 
-	const onSubmit: SubmitHandler<any> = async (data) => {
+	const onSubmit: SubmitHandler<UserSchema> = async (data) => {
 		let response
 
 		switch (data.mode) {
-			case 'update':
+			case 'Update':
 				response = await updateUser(data)
 				break
 			case 'signUp':
@@ -45,7 +48,7 @@ export function UserForm({ defaultValues }: Props) {
 				onSubmit={form.handleSubmit(onSubmit)}
 				className='max-w-96 space-y-6'
 			>
-				{(mode === 'signUp' || mode === 'update') && (
+				{(mode === 'signUp' || mode === 'Update') && (
 					<>
 						<Input control={form.control} name='fullName' label='Full Name' />
 						<Input

@@ -2,7 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
+import { postSchema, PostSchema } from '@/db/schema/post'
 import {
 	createPost,
 	updatePost,
@@ -14,18 +16,20 @@ import { Form } from '@/components/ui/form'
 import { toast } from '@/components/ui/use-toast'
 
 type Props = {
-	defaultValues: any
+	defaultValues: PostSchema
 	categoriesData: { id: number; name: string }[] | null
 	tagsData: { id: number; name: string }[] | null
 }
+
 export function PostForm({ defaultValues, categoriesData, tagsData }: Props) {
 	const router = useRouter()
 
-	const form = useForm<any>({
+	const form = useForm<PostSchema>({
 		defaultValues,
+		resolver: zodResolver(postSchema),
 	})
 
-	const onSubmit: SubmitHandler<any> = async (data) => {
+	const onSubmit: SubmitHandler<PostSchema> = async (data) => {
 		let response
 		if (data.mode === 'create') {
 			response = await createPost(data)

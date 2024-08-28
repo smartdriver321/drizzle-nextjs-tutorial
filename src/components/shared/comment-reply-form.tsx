@@ -1,7 +1,9 @@
 'use client'
 
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
+import { commentSchema, CommentSchema } from '@/db/schema/comment'
 import { createComment } from '@/app/(public)/posts/[id]/actions'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,13 +17,14 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
 
-type Props = { defaultValues: any }
+type Props = { defaultValues: CommentSchema }
 export function CommentReplyForm({ defaultValues }: Props) {
-	const form = useForm<any>({
+	const form = useForm<CommentSchema>({
 		defaultValues,
+		resolver: zodResolver(commentSchema),
 	})
 
-	const onSubmit: SubmitHandler<any> = async (data) => {
+	const onSubmit: SubmitHandler<CommentSchema> = async (data) => {
 		const response = await createComment(data)
 		toast({
 			title: response.message,

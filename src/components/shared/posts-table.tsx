@@ -1,8 +1,9 @@
-import { EllipsisVertical, Eye, Pencil } from 'lucide-react'
 import Link from 'next/link'
+import { EllipsisVertical, Eye, Pencil } from 'lucide-react'
 
-import { DeletePostButton } from '@/components/_components/delete-post-button'
+import { SelectPostModel } from '@/db/schema/post'
 import { getCategories } from '@/app/queries'
+import { DeletePostButton } from '@/components/shared/delete-post-button'
 import { Button } from '@/components/ui/button'
 import {
 	Popover,
@@ -19,7 +20,7 @@ import {
 } from '@/components/ui/table'
 
 type Props = {
-	rows: any[] | null
+	rows: SelectPostModel[] | null
 	columns: string[]
 }
 export async function PostsTable({ rows, columns }: Props) {
