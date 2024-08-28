@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 
-import { wait } from '@/lib/utils'
+import { getUserByEmailAndPassword } from '@/app/(auth)/sign-in/queries'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
 	providers: [
@@ -11,17 +11,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				password: {},
 			},
 			authorize: async (credentials) => {
-				await wait()
-
-				return {
-					id: '1',
-					fullName: 'mock full name',
-					age: 18,
-					password: 'mock password',
-					email: 'mock@mock.com',
-					createdAt: '2024-06-23 16:05:26.954952',
-					updatedAt: '2024-06-23 16:05:26.954952',
+				const dbUser = await getUserByEmailAndPassword(credentials)
+				if (!dbUser) {
+					throw new Error('User not found / Wrong credentials')
 				}
+
+				return { ...dbUser, id: dbUser.id.toString() }
 			},
 		}),
 	],
